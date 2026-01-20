@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FocusCrusher // RAW FOCUS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+      /* Brutalist overrides */
+      :root {
+        --font-display: 'Archivo Black', sans-serif;
+        --font-mono: 'IBM Plex Mono', monospace;
+        --color-accent: #CCFF00;
+      }
+      body {
+        font-family: var(--font-mono);
+        background-color: #1a1a1a;
+        color: #ffffff;
+        overflow-x: hidden;
+        cursor: crosshair; /* Global brutalist cursor */
+      }
+      
+      /* HIGH CONTRAST SELECTION - Critical for accessibility/UX */
+      ::selection {
+        background: var(--color-accent);
+        color: black;
+        text-shadow: none;
+      }
+      ::-moz-selection {
+        background: var(--color-accent);
+        color: black;
+        text-shadow: none;
+      }
+
+      button {
+        cursor: pointer; /* Restore pointer for buttons */
+      }
+      
+      /* CRT Scanline Effect */
+      .scanlines::before {
+        content: " ";
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+        z-index: 5;
+        background-size: 100% 2px, 3px 100%;
+        pointer-events: none;
+      }
+
+      /* PDF Styles - Critical Text Layer Structure since we don't import library CSS */
+      .react-pdf__Page {
+        position: relative;
+        background-color: white;
+      }
+
+      .react-pdf__Page__textContent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: 0 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .react-pdf__Page__textContent > span {
+        position: absolute;
+        white-space: pre;
+        cursor: text;
+        transform-origin: 0% 0%;
+        pointer-events: auto;
+        /* Default: transparent text for selection only */
+        color: transparent;
+      }
+
+      /* Bionic Mode: Dim Canvas */
+      .bionic-active .react-pdf__Page__canvas {
+        opacity: 0.1; 
+        transition: opacity 0.3s ease;
+      }
+
+      /* Bionic Mode: Show Text Layer */
+      /* We make the parent span transparent color-wise, but fully opaque element-wise */
+      .bionic-active .react-pdf__Page__textContent > span {
+        color: transparent; /* Keep parent transparent to hide non-bionic parts if any */
+        opacity: 1 !important;
+      }
+      
+      /* Style the regular text parts */
+      .bionic-active .react-pdf__Page__textContent > span {
+          color: rgba(0,0,0,0.6); /* Fallback color for parts not wrapped in b */
+      }
+
+      /* Style the BOLD parts (<b> tags injected by us) */
+      /* CRITICAL: We use text-shadow to fake bolding. Real bolding changes width and breaks PDF layout. */
+      .bionic-active .react-pdf__Page__textContent > span b {
+        font-weight: normal !important; /* Reset font weight to match PDF metric */
+        color: black;
+        text-shadow: 0.25px 0 0 currentColor, -0.25px 0 0 currentColor; /* Faux bold */
+        opacity: 1;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 16px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000;
+        border-left: 2px solid #333;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-accent);
+        border: 2px solid #000;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #fff;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
+    "zustand": "https://esm.sh/zustand@^5.0.10",
+    "react-pdf": "https://esm.sh/react-pdf@^10.3.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
